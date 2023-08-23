@@ -14,7 +14,7 @@ As an innput data use ONT reads
 * snakemake env
 * strainy env
 
-### Install
+### Installation
 Follow the installation instructions provided by stRainy to install the stRainy tool.
 Install the required assembly tool and MAG binning tool following their respective documentation.
 
