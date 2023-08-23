@@ -13,9 +13,6 @@ requiredNamed.add_argument("-outfile", help="output file file", required=True)
 args = parser.parse_args()
 initial_graph = gfapy.Gfa.from_file(args.g,vlevel=0)
 
-#with open(args.list, 'rb') as f:
-    #unitigs = pickle.load(f)
-
 
 with open(args.list, 'r') as f:
     unitigs = [line.rstrip(u'\n') for line in f]
