@@ -1,19 +1,19 @@
 # MetagenomeStrainy_ONT_pipeline
 ## Introduction
 
-The pipeline is designed to analyze real metagenome data obtained from ONT sequencing technology. Due to the complexity of real metagenomic data, this pipeline suggests a two-step approach. First, the assembly is split into Metagenome-Assembled Genomes (MAGs), and subsequently, the stRainy tool(https://github.com/katerinakazantseva/stRainy) is applied to each MAG individually.
+The pipeline is designed to analyze real metagenome data obtained from ONT sequencing technology. Due to the complexity of real metagenomic data, this pipeline suggests a two-step approach. First, the assembly is split into Metagenome-Assembled Genomes (MAGs), and subsequently, the [**stRainy**](https://github.com/katerinakazantseva/stRainy) is applied to each MAG individually. Please note that only MAGs with coverage>30, contamination <20 and completeness >80 will be phased.
 
 ## Data
 ### Input data
 As an innput data use ONT reads
+
 ### Output data
-* __flye_output/__
-* __strainy_split/__
-* __bins/__ - 
-* __qa_bins/__ - 
-* __strainy_final/__
-* __ransformed_bins/__ 
-* __qa_transformed_bins__ - 
+* __flye_output__ initial metagenome assembly
+* __bins__ - initial MAG binning
+* __qa_bins__ - initial MAG quality
+* __strainy_final__ phased MAGs
+* __transformed_bins__ phased MAGs fasta files
+* __qa_transformed_bins__ - phased MAG quality
 
 
 ## Installation
@@ -23,18 +23,18 @@ cd MetagenomeStrainy_ONT_pipeline
 ```
 
 ### Requirements
-* Snakemake conda env https://snakemake.github.io/
-* Strainy env https://github.com/katerinakazantseva/stRainy
-* Clair3 https://github.com/HKU-BAL/Clair3
-* Checkm2 conda env https://github.com/chklovski/CheckM2
-* metabat2 installed in snakemake env https://anaconda.org/bioconda/metabat2
+* [**Snakemake**](https://snakemake.github.io/) conda enviroment 
+* [**stRainy**](https://github.com/katerinakazantseva/stRainy) env 
+* [**Clair3**](https://github.com/HKU-BAL/Clair3)
+* [**Checkm2**](https://github.com/chklovski/CheckM2)
+* [**metabat2**](https://anaconda.org/bioconda/metabat2) installed in snakemake env 
 
 ## Pipeline Steps
-* Build metagenome assembly using metaFlye
-* Call MAGs metabat
-* Quality assurance checkM2
-* Filtration MAGs based on completeness, coverage and contamination
-* Phasing each bam with stRainy
+* Build a metagenome assembly with metaFlye
+* Call MAGs with metabat
+* Check the quality of MAGs with checkM2
+* Filtering MAGs by completeness, coverage and contamination
+* Phasing each MAG with stRainy
 
 ### Configuration
 Before run please update parameters in snakemake file:
