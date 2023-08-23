@@ -23,11 +23,11 @@ cd MetagenomeStrainy_ONT_pipeline
 ```
 
 ### Requirements
-* [**Snakemake**](https://snakemake.github.io/) conda enviroment 
-* [**stRainy**](https://github.com/katerinakazantseva/stRainy) env 
-* [**Clair3**](https://github.com/HKU-BAL/Clair3)
-* [**Checkm2**](https://github.com/chklovski/CheckM2)
-* [**metabat2**](https://anaconda.org/bioconda/metabat2) installed in snakemake env 
+* [**Snakemake**](https://snakemake.github.io/) conda environment 
+* [**stRainy**](https://github.com/katerinakazantseva/stRainy) conda environment 
+* [**Clair3**](https://github.com/HKU-BAL/Clair3) conda environment 
+* [**Checkm2**](https://github.com/chklovski/CheckM2) conda environment 
+* [**metabat2**](https://anaconda.org/bioconda/metabat2) installed in snakemake conda environment 
 
 ## Pipeline Steps
 * Build a metagenome assembly with metaFlye
