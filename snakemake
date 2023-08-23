@@ -14,7 +14,7 @@ input_reads=""
 flye_path=""
 
 #Conda envs path (i.e "~/miniconda3/envs/")
-conda path=""
+conda_path=""
 
 #Strainy path
 strainy_path=""
