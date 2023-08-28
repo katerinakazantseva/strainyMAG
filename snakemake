@@ -42,7 +42,7 @@ rule flye_build_assembly:
 rule strainy_split_unitigs:
     input:"output/flye_output"
     output:"output/strainy_split/preprocessing_data/long_unitigs_split.bam", "output/strainy_split/preprocessing_data/long_unitigs_split.gfa","output/strainy_split/preprocessing_data/gfa_converted.fasta"
-    conda:"{conda_path}/strainy"
+    conda:conda_path+"strainy"
     threads: 30
     shell:"python3 {strainy_path}  -g {input}/assembly_graph.gfa   -q {input_reads}  --unitig-split-length 50 -o output/strainy_split -b  none.bam -t 30 -m nano --only_split True"
 
@@ -60,7 +60,7 @@ rule mag_qa:
 	input: "output/bins"
 	output: outdir=directory("output/qa_bins"),report="output/qa_bins/quality_report.tsv"
 	threads: 30
-	conda:	"{conda_path}/checkm2"
+	conda:	conda_path+"checkm2"
 	shell: "checkm2 predict -x .fa  -i {input} -o {output.outdir} -t 30"
 
 
@@ -75,7 +75,7 @@ rule unitig_per_bin:
 rule subset_bam:
 	input: l="output/unitigs/{bin}.lst",	bam="output/strainy_split/preprocessing_data/long_unitigs_split.bam"
 	output: "output/bams/{bin}.bam"
-	conda: "{conda_path}/strainy"
+	conda: conda_path+"strainy"
 	threads: 30
 	shell: "python3 split_bam.py -bam {input.bam} -l {input.l} -o {output}"
 
@@ -84,7 +84,7 @@ rule subset_bam:
 rule index_bam:
 	input:"output/bams/{bin}.bam"
 	output: "output/bams/{bin}.bam.bai"
-	conda: "{conda_path}/strainy"
+	conda: conda_path+"strainy"
 	shell: "samtools index {input} "
 
 
@@ -92,7 +92,7 @@ rule index_bam:
 rule make_split_fa:
 	input: "output/strainy_split/preprocessing_data/long_unitigs_split.gfa"
 	output: "output/gfa_splitted.fasta"
-	conda: "{conda_path}/strainy"
+	conda: conda_path+"strainy"
 	shell:"""
 	awk '//^S{{print ">"$2"\\n"$3}}' {input} | fold > {output}
 	"""
@@ -102,7 +102,7 @@ rule make_split_fa:
 rule index_fa:
 	input: "output/strainy_split/preprocessing_data/gfa_converted.fasta"
 	output: "output/strainy_split/preprocessing_data/gfa_converted.fasta.fai"
-	conda: "{conda_path}/strainy"
+	conda: conda_path+"strainy"
 	shell:"samtools faidx {input}"
 
 
@@ -111,7 +111,7 @@ rule call_snp:
 	input:b="output/bams/{bin}.bam",bai="output/bams/{bin}.bam.bai",fai="output/strainy_split/preprocessing_data/gfa_converted.fasta.fai",fa="output/strainy_split/preprocessing_data/gfa_converted.fasta"
 	threads: 30
 	output: "output/clair/{bin}/merge_output.vcf.gz"
-	conda: "{conda_path}/clair3"
+	conda: conda_path+"clair3"
 	shell: "run_clair3.sh --bam_fn={input.b} --ref_fn={input.fa} --output=output/clair/{wildcards.bin} --threads=30 --platform=ont --include_all_ctgs --model_path={clair_model_path} --chunk_size=50000  --snp_min_af=0.15 --no_phasing_for_fa"
 
 
@@ -126,7 +126,7 @@ rule  unzip_snp:
 rule subset_gfa:
 	input: g="output/strainy_split/preprocessing_data/long_unitigs_split.gfa", l="output/unitigs/{bin}.lst"
 	output: "output/gfa_sub/{bin}.gfa"
-	conda: "{conda_path}/strainy"
+	conda: conda_path+"strainy"
 	shell: "python3 split_gfa.py -g {input.g} -l {input.l} -outfile {output}"
 
 
@@ -134,7 +134,7 @@ rule subset_gfa:
 rule  strainy:
 	input: snp="output/clair/{bin}/snp.vcf", b="output/bams/{bin}.bam",bai="output/bams/{bin}.bam.bai", gfa="output/gfa_sub/{bin}.gfa" 
 	output: "output/strainy_final/{bin}/strainy_final.gfa"
-	conda: "{conda_path}/strainy"
+	conda: conda_path+"strainy"
 	threads: 30
 	shell: "python3 {strainy_path} -g {input.gfa} -q {input_reads} -o output/strainy_final/{wildcards.bin}  -b {input.b} -t 30 -m nano --snp {input.snp} --unitig-split-length 0" #Add af abd base quality
 
@@ -160,7 +160,7 @@ rule run_filter_best:
 rule count_MAG_coverage:
         input:  "best_res",   storage.fetch("myvar")   
         output: "output/coverage_list.lst"
-        conda:"{conda_path}/strainy"
+        conda:conda_path+"strainy"
         shell:"python3 calc_cov.py > output/coverage_list.lst"
 
 
@@ -179,5 +179,5 @@ rule mag_transformed_qa:
     input:  "cov_res",storage.fetch("myvar")
     output: directory("output/qa_transformed_bins")
     conda:
-        "{conda_path}/checkm2"
+        conda_path+"checkm2"
     shell: "checkm2 predict -x .fa  -i output/transformed_bins -o {output} -t 30"
