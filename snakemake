@@ -73,12 +73,11 @@ rule unitig_per_bin:
 
 
 rule subset_bam:
-	input: l="output/unitigs/{bin}.lst",	bam="output/strainy_split/preprocessing_data/long_unitigs_split.bam"
-	output: "output/bams/{bin}.bam"
-	conda: conda_path+"strainy"
-	threads: 30
-	shell: "python3 split_bam.py -bam {input.bam} -l {input.l} -o {output}"
-
+        input: l="output/unitigs_connected/{bin}.lst",  bam="output/strainy_split/preprocessing_data/long_unitigs_split.bam"
+        output: "output/bams/{bin}.bam"
+        conda: conda_path+"strainy"
+        threads: 30
+        shell: "python3 split_bam.py -bam {input.bam} -list {input.l} -o {output}"
 
 
 rule index_bam:
@@ -121,14 +120,17 @@ rule  unzip_snp:
 	output: "output/clair/{bin}/snp.vcf"
 	shell: "gunzip -c {input} > {output}"
 
-
+rule connect_unitigs:
+        input: g="output/strainy_split/preprocessing_data/long_unitigs_split.gfa", l="output/unitigs/{bin}.lst"
+        output: "output/unitigs_connected/{bin}.lst"
+        conda: conda_path+"strainy"
+        shell: "python3 connect_bin.py {input.l} output/unitigs/ {input.g} {output}"
 
 rule subset_gfa:
-	input: g="output/strainy_split/preprocessing_data/long_unitigs_split.gfa", l="output/unitigs/{bin}.lst"
-	output: "output/gfa_sub/{bin}.gfa"
-	conda: conda_path+"strainy"
-	shell: "python3 split_gfa.py -g {input.g} -l {input.l} -outfile {output}"
-
+        input: g="output/strainy_split/preprocessing_data/long_unitigs_split.gfa", l="output/unitigs_connected/{bin}.lst"
+        output: "output/gfa_sub/{bin}.gfa"
+        conda: conda_path+"strainy"
+        shell: "python3 split_gfa.py -g {input.g} -l {input.l} -outfile {output}"
 
 
 rule  strainy:
@@ -144,7 +146,6 @@ rule  bin_transform:
 	input:"output/strainy_final/{bin}/strainy_final.gfa"
 	output: "output/transformed_bins/{bin}.fa"
 	shell:"""awk '/^S/{{print ">"$2"\\n"$3}}' output/strainy_final/{wildcards.bin}/strainy_final.gfa > {output}"""
-
 
 
 rule run_filter_best:
